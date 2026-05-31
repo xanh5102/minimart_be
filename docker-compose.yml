@@ -1,0 +1,59 @@
+services:
+  app:
+    build: .
+    container_name: minimart-app
+    restart: unless-stopped
+    ports:
+      - "2800:2800"
+    # Load secrets (JWT, Cloudinary, Google OAuth, ...) from .env, then override
+    # the connection vars so the app reaches Mongo/Redis by service name.
+    env_file:
+      - .env
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/minimart
+      REDIS_URL: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      CHOKIDAR_USEPOLLING: "true" # reliable nodemon reload over the bind-mount
+    volumes:
+      - .:/app # live reload of source
+      - /app/node_modules # keep the container's Linux-built node_modules
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  mongo:
+    image: mongo:7
+    container_name: minimart-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ping:1}).ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  redis:
+    image: redis:7-alpine
+    container_name: minimart-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo-data:
+  redis-data:

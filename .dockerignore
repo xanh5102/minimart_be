@@ -1,0 +1,14 @@
+# Never copy host node_modules (it's built for macOS; the image builds Linux ones)
+node_modules
+
+# Don't bake secrets into image layers — .env is provided at runtime via compose
+.env
+.env.*
+!.env.example
+
+# VCS / logs / OS noise
+.git
+.gitignore
+*.log
+npm-debug.log*
+.DS_Store

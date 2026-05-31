@@ -1,0 +1,14 @@
+###
+GET http://localhost:3000/api/products/?price[gte]=600000&page=1
+Content-Type: application/json
+
+###
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MThiZGMyMDQ1NzdlMmJkMGI2YmFiMTciLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2Mzc1OTAyNTAsImV4cCI6MTYzNzU5NzQ1MH0.w7UNei4sldap2oUkx8V3DZpRW_Emx-4lgF7rKCIGGgI
+
+
+{
+    "email": "vietkhang04@gmail.com",
+    "password": "112233"
+}
