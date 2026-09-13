@@ -7,37 +7,39 @@ const sendResponse = require("../helpers/sendResponse");
 // @desc get list categoris
 // @access public
 const getCategories = asyncHandle(async (req, res, next) => {
-    const categories = await Category.find();
-    if (!categories) {
-        next(new ErrorResponse("Categories not found", 404));
-    }
-    sendResponse(res, "Get categories successfully", { categories });
+  const categories = await Category.find();
+  if (!categories) {
+    next(new ErrorResponse("Categories not found", 404));
+  }
+  sendResponse(res, "Get categories successfully", { categories });
 });
 
 // @route [POST] /api/categories/
 // @desc create new category
 // @access private
 const createCategory = asyncHandle(async (req, res, next) => {
-    const { categoryName } = req.body;
+  const categoryName = req.body.categoryName || req.body.name;
 
-    // simple validate
-    if (!categoryName) {
-        return next(new ErrorResponse("Missing information", 404));
-    }
+  // simple validate
+  if (!categoryName) {
+    return next(new ErrorResponse("Missing information", 400));
+  }
 
-    // all good
-    const newCategory = new Category({
-        name: categoryName,
-    });
+  // all good
+  const newCategory = new Category({
+    name: categoryName,
+  });
 
-    await newCategory.save();
-    sendResponse(res, "Create new category successfully");
+  await newCategory.save();
+  sendResponse(res, "Create new category successfully", {
+    category: newCategory,
+  });
 });
 // @route [POST] /api/categories/
 // @desc create new category
 // @access private
 
 module.exports = {
-    createCategory,
-    getCategories,
+  createCategory,
+  getCategories,
 };
